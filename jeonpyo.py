@@ -1,16 +1,13 @@
-import csv
-
 from datetime import datetime
-import numpy as np
-import tkinter as tk
+
 import os
 from tkinter import ttk
+import tkinter as tk
 import win32com.client
-import win32print
-import win32ui
 import openpyxl
 import pandas as pd
-file_path = '데이터파일주소'
+
+file_path = '데이터.xlsx'
 
 # Read the .xlsx file
 df = pd.read_excel(file_path)
@@ -33,7 +30,8 @@ def save_data():
     if mock in mocks:
         price = prices[mocks.index(mock)]  # 가격 설정
 
-    tot2 = 0    
+    tot2 = 0   
+    tot = 0 
     totprice = price * num  # 공급가액 계산
     df2 = pd.read_excel(file_name) if file_name in os.listdir() else pd.DataFrame()  # 파일이 있으면 읽고, 없으면 빈 DataFrame 생성
 
@@ -69,7 +67,7 @@ def save_data():
 
     # 파일 저장 완료 메시지 출력 (옵션)
     print(f"{file_name}에 데이터가 저장되었습니다.")
-    file_path = '@@@명세표의 절대경로@@@'
+    file_path = r'C:\Users\user\dist\거래명세서및거래명세표.xlsx'
     wb1 = openpyxl.load_workbook(file_path)
     sheet = wb1.active
     sheet['D4'] = datetime.now().strftime('%Y-%m-%d')
@@ -79,29 +77,15 @@ def save_data():
     sheet['I10'] = num
     sheet['M10'] = price
     sheet['P10'] = totprice
-    if tot is None or tot == '':
-        sheet['E21'] = 0
-    else:
-        sheet['E21'] = tot
+    sheet['E21'] = tot
     sheet['P21'] = tot2
     wb1.save(file_path)
+
+    
     excel = win32com.client.Dispatch("Excel.Application")
     excel.Visible = False
     workbook = excel.Workbooks.Open(file_path)
-    printer_name = win32print.GetDefaultPrinter()
-    print("프린트 정보:")
-    print(f"  - 파일: {file_path}")
-    print(f"  - 기본 프린터: {printer_name}")
-    message = f"문서 '{file_path}'을(를) 기본 프린터로 인쇄하시겠습니까? (Y/N)"
-    response = input(message)
-
-    if response.strip().lower() == 'y':
-        # 기본 프린터로 인쇄
-        workbook.PrintOut()
-        print("인쇄가 시작되었습니다.")
-    else:
-        print("인쇄가 취소되었습니다.")
-        workbook.Close(False)  # 저장하지 않고 닫기
+    workbook.PrintOut()
     excel.Quit()
 def fine_data():
     fineyou = you_var.get()
@@ -208,5 +192,7 @@ result_result.grid(row=2, column=4, padx=5, pady=5)
 save_button.grid(row=3, column=1, padx=5, pady=5)
 
 
+
+root.mainloop()
 
 root.mainloop()
